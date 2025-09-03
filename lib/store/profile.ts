@@ -1,5 +1,4 @@
-// lib/store/profile.ts
-import { create } from 'zustand';
+import { createWithEqualityFn } from 'zustand/traditional';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -79,7 +78,7 @@ export type OnboardingDraft = {
   notificationsOptIn: boolean;
   morningTime?: TimeHM;
   eveningTime?: TimeHM;
-  quietHours?: TimeWindow;
+  quietHours?: Partial<TimeWindow>;
 
   // Шаг 3
   addressForm?: 'ty' | 'vy';
@@ -122,7 +121,7 @@ const defaultDraft: OnboardingDraft = {
   weekStartsOn: 0,
 };
 
-export const useProfile = create<ProfileState>()(
+export const useProfile = createWithEqualityFn<ProfileState>()(
   persist(
     (set, get) => ({
       profile: null,
