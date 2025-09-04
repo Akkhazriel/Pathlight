@@ -9,12 +9,19 @@ import { steps } from '@/components/onboarding/steps';
 import { useProfile } from '@/lib/store/profile';
 import { useAssistantUI } from '../(core)/assistant/state/uiStore';
 import { useEffect } from 'react';
+import { assistantBus } from '../(core)/assistant/bus';
+import { AnchorRegistry } from '../(core)/assistant/anchors/AnchorRegistry';
 
 const TOTAL_STEPS = steps.length;
 
 export default function Onboarding() {
   const { draft, currentStep, setStep, setProfile, setOnboarded } = useProfile();
   const showBubble = useAssistantUI((s) => s.showBubble);
+
+  useEffect(() => {
+    assistantBus.emit('agent:greet', undefined);
+    assistantBus.emit('agent:speaking', { text: 'Привет! Помогу быстро настроиться ✨' });
+  }, []);
 
   useEffect(() => {
     showBubble('Привет! Я — твой светлячок. Помогу пройти регистрацию ✨');
@@ -27,6 +34,21 @@ export default function Onboarding() {
 
   const StepComponent = steps[currentStep].Component;
   const canProceed = steps[currentStep].validate(draft);
+
+  // Пример: зарегистрировать якорь кнопки
+  const onContinueLayout = (e: any) => {
+    const { x, y, width, height } = e.nativeEvent.layout;
+    AnchorRegistry.set('nextButton', { x: x + width / 2, y: y + height / 2 });
+  };
+
+  // Когда нужно "указать" на кнопку:
+  // assistantBus.emit('agent:point', { anchorId: 'nextButton' });
+
+  // Когда пользователь начал ввод:
+  // assistantBus.emit('agent:listening', undefined);
+
+  // Когда отправил форму:
+  // assistantBus.emit('agent:speaking', { text: 'Отлично! Жму дальше 🚀' });
 
   const onBack = () => {
     if (currentStep === 0) return router.back();

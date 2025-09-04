@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Canvas } from '@react-three/fiber/native';
 import SceneController from './SceneController';
 
-export default function AssistantCanvas() {
+function AssistantCanvasImpl() {
   return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+    <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
       <Canvas
         onCreated={(state) => {
-          state.gl.setClearColor(0x000000, 0); // прозрачный фон
+          // Прозрачный фон — Canvas “парит” над UI
+          state.gl.setClearColor(0x000000, 0);
         }}
       >
         <SceneController />
@@ -16,3 +17,6 @@ export default function AssistantCanvas() {
     </View>
   );
 }
+
+const AssistantCanvas = memo(AssistantCanvasImpl);
+export default AssistantCanvas;
