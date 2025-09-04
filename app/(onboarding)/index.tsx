@@ -7,12 +7,18 @@ import * as Localization from 'expo-localization';
 import ProgressBar from '@/components/onboarding/ProgressBar';
 import { steps } from '@/components/onboarding/steps';
 import { useProfile } from '@/lib/store/profile';
+import { useAssistantUI } from '../(core)/assistant/state/uiStore';
 import { useEffect } from 'react';
 
 const TOTAL_STEPS = steps.length;
 
 export default function Onboarding() {
   const { draft, currentStep, setStep, setProfile, setOnboarded } = useProfile();
+  const showBubble = useAssistantUI((s) => s.showBubble);
+
+  useEffect(() => {
+    showBubble('Привет! Я — твой светлячок. Помогу пройти регистрацию ✨');
+  }, [showBubble]);
 
   // страховка: при заходе в онбординг начинаем с первого шага
   useEffect(() => {
